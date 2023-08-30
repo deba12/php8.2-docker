@@ -9,7 +9,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y update && \
     php8.2-xml php8.2-curl php8.2-zip php8.2-gd php8.2-intl \
     php8.2-bcmath php8.2-igbinary php8.2-imagick php8.2-int php8.2-msgpack php8.2-opcache \
     php8.2-readline php8.2-soap php8.2-sqlite3 php8.2-ssh2 php8.2-xml php8.2-xmlrpc php8.2-yaml \
-    php8.2-zmq php8.2-uuid  php8.2-apcu && rm -rf /var/lib/apt/lists/* \
+    php8.2-zmq php8.2-uuid  php8.2-apcu && rm -rf /var/lib/apt/lists/*
 
 RUN rm /etc/php/8.2/fpm/pool.d/www.conf && \
     {  \
@@ -39,7 +39,13 @@ RUN rm /etc/php/8.2/fpm/pool.d/www.conf && \
         echo; \
         echo 'user = www-data'; \
         echo 'group = www-data'; \
-    } | tee /etc/php/8.2/fpm/pool.d/www.conf
+    } | tee /etc/php/8.2/fpm/pool.d/www.conf && \
+    { \
+        echo 'auto_prepend_file /etc/php/8.2/fpm/APCuSessionHandler.php'; \
+        echo; \
+    } | tee --append /etc/php/8.2/fpm.php.ini
+
+COPY APCuSessionHandler.php /etc/php/8.2/fpm
 
 STOPSIGNAL SIGQUIT
 
